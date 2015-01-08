@@ -18,9 +18,16 @@ cabal-version:       >=1.10
 executable jsonxlsx
   main-is:             Main.hs
   build-depends:       base >=4.7 && <4.8
-                     , xlsx == 0.1.0.4
+                     , xlsx == 0.2.0.0
                      , containers
                      , old-time
                      , bytestring
                      , aeson
+                     , attoparsec
+                     , unordered-containers
+                     , string-qq
+                     , optparse-applicative
+                     , vector
+                     , scientific >= 0.3.3
+                     , text
   default-language:    Haskell2010
