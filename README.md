@@ -7,7 +7,7 @@ Excel, only with OpenOffice.
 
 ## Install
 
-You must have a recente version of the Haskell Platform on your system.
+You must have a recent version of the Haskell Platform on your system.
 
 A prerequisite is a the xlsx fork at https://github.com/danchoi/xlsx, which 
 must be added to the cabal sandbox before building `jsonxlsx`.  Here are the steps
