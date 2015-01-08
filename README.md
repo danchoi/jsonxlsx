@@ -93,7 +93,7 @@ This is the output (movies.xlsx):
 
 ![screen](https://raw.githubusercontent.com/danchoi/jsonxlsx/master/jsonxlsxscreen.png)
 
-See the [README for jsontsv](https://github.com/danchoi/jsontsv) to see how to use `jq` 
+See the [README for jsontsv](https://github.com/danchoi/jsontsv#usage) to see how to use `jq` 
 to generate JSON object streams from nested JSON data structures.
 
 
