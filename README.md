@@ -102,7 +102,7 @@ to generate JSON object streams from nested JSON data structures.
 The [xlsx](https://github.com/danchoi/xlsx/blob/master/src/Codec/Xlsx/Types.hs)
 library that  `jsonxlsx` uses to generate Excel output seems to have ways to control
 the column widths and other characteristics of the Excel spreadsheet.
-Contributors are welcome to adding ways to manipulating those controls via `jsonxlsx`.
+Contributors are welcome to add ways of controlling these parameters to `jsonxlsx`.
 
 ## Related
 
