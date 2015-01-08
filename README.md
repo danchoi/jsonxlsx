@@ -60,7 +60,8 @@ This is the command:
 
 ```
 < sample.json jsonxlsx \
-  'title:"Movie Title" year stars.name:"Movie Actors" ratings.imdb:"IMDB Score"' movies.xlsx 
+  'title:"Movie Title" year stars.name:"Movie Actors" ratings.imdb:"IMDB Score"' \
+  movies.xlsx 
 ```
 
 This is the output (movies.xlsx):
