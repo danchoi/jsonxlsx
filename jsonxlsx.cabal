@@ -22,4 +22,5 @@ executable jsonxlsx
                      , containers
                      , old-time
                      , bytestring
+                     , aeson
   default-language:    Haskell2010
