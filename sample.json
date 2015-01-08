@@ -1,0 +1,30 @@
+{
+  "title": "Terminator 2: Judgement Day",
+  "year": 1991,
+  "stars": [
+    {
+      "name": "Arnold Schwarzenegger"
+    },
+    {
+      "name": "Linda Hamilton"
+    }
+  ],
+  "ratings": {
+    "imdb": 8.5
+  }
+}
+{
+  "title": "Interstellar",
+  "year": 2014,
+  "stars": [
+    {
+      "name": "Matthew McConaughey"
+    },
+    {
+      "name": "Anne Hathaway"
+    }
+  ],
+  "ratings": {
+    "imdb": 8.9
+  }
+}
