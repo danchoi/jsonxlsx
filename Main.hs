@@ -155,14 +155,7 @@ keyPathToHeader (KeyPath ks Nothing) =
 spaces = many1 AT.space
 
 pKeyPaths :: AT.Parser [KeyPath]
-pKeyPaths = pKeyPath `strictSepBy` spaces
-
-strictSepBy :: AT.Parser KeyPath -> AT.Parser s -> AT.Parser [KeyPath]
-strictSepBy p s = scan
-  where scan = do 
-          x :: KeyPath <- p 
-          xs <- ((s *> scan) <|> pure [])
-          return (x:xs)
+pKeyPaths = pKeyPath `AT.sepBy` spaces
 
 pKeyPath :: AT.Parser KeyPath
 pKeyPath = KeyPath 
