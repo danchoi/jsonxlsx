@@ -4,19 +4,39 @@ Transforms a standard JSON format to a Excel xlsx document
 
 ## Install
 
+You must have a recente version of the Haskell Platform on your system.
+
 A prerequisite is a the xlsx fork at https://github.com/danchoi/xlsx, which 
-must be added to the cabal sandbox:
+must be added to the cabal sandbox before building `jsonxlsx`.  Here are the steps
 
-    cabal sandbox add-source ../path-to-xlsx-fork
+    git clone git@github.com/danchoi/xlsx
+    git clone git@github.com/danchoi/jsonxlsx
+    cd jsonxlsx
+    cabal update
+    cabal sandbox init
+    cabal sandbox add-source ../xlsx
+    cabal install --only-dependencies
+    cabal build
 
-Then you can cabal build this project in a cabal sandbox.
+    # Now copy dist/build/jsonxlsx/jsonxlsx to a location on your PATH
 
 ## Usage
 
 ```
+jsonxlsx
+
 Usage: jsonxlsx [-a DELIM] FIELDS OUTFILE [--debug]
   Transform JSON object steam to XLSX. On STDIN provide an input stream of
   newline-separated JSON objects.
+
+Available options:
+  -h,--help                Show this help text
+  -a DELIM                 Concatentated array elem delimiter. Defaults to
+                           comma.
+  FIELDS                   JSON keypath expressions
+  OUTFILE                  Output file to write to. Use '-' to emit binary xlsx
+                           data to STDOUT.
+  --debug                  Debug keypaths
 ```
 
 ## Example: 
@@ -58,7 +78,7 @@ sample.json:
 }
 ```
 
-This is the command:
+This is the command to turn this stream into an XLSX file:
 
 ```
 < sample.json jsonxlsx \
@@ -71,10 +91,19 @@ This is the output (movies.xlsx):
 ![screen](https://raw.githubusercontent.com/danchoi/jsonxlsx/master/jsonxlsxscreen.png)
 
 
-## TODO
+
+## Future improvements
 
 The [xlsx](https://github.com/danchoi/xlsx/blob/master/src/Codec/Xlsx/Types.hs)
 library that  `jsonxlsx` uses to generate Excel output seems to have ways to control
 the column widths and other characteristics of the Excel spreadsheet.
 Contributors are welcome to adding ways to manipulating those controls via `jsonxlsx`.
 
+## Related
+
+* [jsontsv](https://github.com/danchoi/jsontsv)
+* [table](https://github.com/danchoi/table)
+* [jsonsql](https://github.com/danchoi/jsonsql)
+* [tsvsql](https://github.com/danchoi/tsvsql)
+
+ 
