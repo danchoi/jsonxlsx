@@ -1,0 +1,67 @@
+# jsonxlsx
+
+Transforms a standard JSON format to a Excel xlsx document
+
+## Install
+
+A prerequisite is a the xlsx fork at https://github.com/danchoi/jsonxlsx, which 
+must be added to the cabal sandbox:
+
+    cabal sandbox add-source ../path-to-jsonxlsx-fork
+
+Then you can cabal build this project in a cabal sandbox.
+
+## Usage
+
+```
+Usage: jsonxlsx [-a DELIM] FIELDS OUTFILE [--debug]
+  Transform JSON object steam to XLSX. On STDIN provide an input stream of
+  newline-separated JSON objects.
+```
+
+## Example: 
+
+This is the input JSON object stream:
+
+```json
+{
+  "title": "Terminator 2: Judgement Day",
+  "year": 1991,
+  "stars": [
+    {
+      "name": "Arnold Schwarzenegger"
+    },
+    {
+      "name": "Linda Hamilton"
+    }
+  ],
+  "ratings": {
+    "imdb": 8.5
+  }
+}
+{
+  "title": "Interstellar",
+  "year": 2014,
+  "stars": [
+    {
+      "name": "Matthew McConaughey"
+    },
+    {
+      "name": "Anne Hathaway"
+    }
+  ],
+  "ratings": {
+    "imdb": 8.9
+  }
+}
+```
+
+This is the command:
+
+```
+dist jsonxlsx 'title:"Movie Title" year stars.name:"Movie Actors" ratings.imdb:"IMDB Score"' movies4.xlsx < sample.json
+```
+
+This is the output:
+
+
