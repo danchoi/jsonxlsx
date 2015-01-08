@@ -74,7 +74,7 @@ This is the output (movies.xlsx):
 ## TODO
 
 The [xlsx](https://github.com/danchoi/xlsx/blob/master/src/Codec/Xlsx/Types.hs)
-that  `jsonxlsx` uses to generate Excel output seems to have ways to control
+library that  `jsonxlsx` uses to generate Excel output seems to have ways to control
 the column widths and other characteristics of the Excel spreadsheet.
 Contributors are welcome to adding ways to manipulating those controls via `jsonxlsx`.
 
