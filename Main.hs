@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes #-}
+{-# LANGUAGE OverloadedStrings, QuasiQuotes, BangPatterns, ScopedTypeVariables #-}
 module Main where
 import Codec.Xlsx
 import Data.Text (Text)
@@ -66,17 +66,10 @@ main = do
       xs = decodeStream x
       ks = parseKeyPath $ T.pack expr
       ks' :: [[Key]]
-      ks' = [ks' | KeyPath ks' _ <- ks]
+      ks' = [k | KeyPath k _ <- ks]
       arrayDelim' = T.pack arrayDelim
       hs :: [Text] -- header labels
-      hs = [case alias of 
-                  Just alias' -> alias'
-                  Nothing -> T.pack keyPathString
-                | (KeyPath _ alias, keyPathString) <- Data.List.zip ks (words expr)] 
-  when debugKeyPaths $ do
-     Prelude.putStrLn $ "Key Paths: " ++ show ks
-     exitSuccess
-
+      hs = map keyPathToHeader ks
   -- extract JSON
   let xs' :: [[Value]]
       xs' = map (evalToValues arrayDelim' ks') xs
@@ -90,6 +83,13 @@ main = do
       allCells = concat (headerIndexedCells:rowsIndexedCells)
       cellMap :: CellMap
       cellMap = M.fromList allCells
+
+  when debugKeyPaths $ do
+     Prelude.putStrLn $ "Key Paths: " ++ show ks
+     print hs
+     print headerCells
+     print headerIndexedCells
+     exitSuccess
   let ws = def { _wsCells = cellMap }
   let xlsx = def { _xlSheets = M.fromList [("test", ws)] }
   if outfile == "-"
@@ -147,21 +147,40 @@ parseKeyPath s = case AT.parseOnly pKeyPaths s of
     Left err -> error $ "Parse error " ++ err 
     Right res -> res
 
+keyPathToHeader :: KeyPath -> Text
+keyPathToHeader (KeyPath _ (Just alias)) = alias
+keyPathToHeader (KeyPath ks Nothing) = 
+    mconcat $ intersperse "." $ [x | Key x <- ks] -- exclude Index keys
+
 spaces = many1 AT.space
 
 pKeyPaths :: AT.Parser [KeyPath]
-pKeyPaths = pKeyPath `AT.sepBy` spaces
+pKeyPaths = pKeyPath `strictSepBy` spaces
+
+strictSepBy :: AT.Parser KeyPath -> AT.Parser s -> AT.Parser [KeyPath]
+strictSepBy p s = scan
+  where scan = do 
+          x :: KeyPath <- p 
+          xs <- ((s *> scan) <|> pure [])
+          return (x:xs)
 
 pKeyPath :: AT.Parser KeyPath
 pKeyPath = KeyPath 
     <$> (AT.sepBy1 pKeyOrIndex (AT.takeWhile1 $ AT.inClass ".["))
     <*> (pAlias <|> pure Nothing)
 
+------------------------------------------------------------------------
 -- | A column header alias is designated by : followed by alphanum string after keypath
+-- The alias string may be quoted with double quotes if it contains strings.
+
 pAlias :: AT.Parser (Maybe Text)
 pAlias = do
     AT.char ':'
-    Just <$> AT.takeWhile1 (AT.inClass "a-zA-Z0-9_-")
+    alias <- (AT.takeWhile1 (AT.inClass "a-zA-Z0-9_-"))  <|> quotedString 
+    return . Just $ alias
+
+quotedString = AT.char '"' *> (AT.takeWhile1 (AT.notInClass "\"")) <* AT.char '"'
+------------------------------------------------------------------------
 
 pKeyOrIndex :: AT.Parser Key
 pKeyOrIndex = pIndex <|> pKey
