@@ -69,3 +69,11 @@ This is the command:
 This is the output (movies.xlsx):
 
 ![screen](https://raw.githubusercontent.com/danchoi/jsonxlsx/master/jsonxlsxscreen.png)
+
+
+## TODO
+
+The `xlsx` library behind `jsonxlsx` seems to have ways to control the cell
+widths and other characteristics of the Excel spreadsheet.  Contributors are
+welcome to adding ways of manipulating those controls.
+
