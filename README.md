@@ -23,6 +23,8 @@ Usage: jsonxlsx [-a DELIM] FIELDS OUTFILE [--debug]
 
 This is the input JSON object stream:
 
+sample.json:
+
 ```json
 {
   "title": "Terminator 2: Judgement Day",
