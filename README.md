@@ -59,9 +59,10 @@ This is the input JSON object stream:
 This is the command:
 
 ```
-dist jsonxlsx 'title:"Movie Title" year stars.name:"Movie Actors" ratings.imdb:"IMDB Score"' movies4.xlsx < sample.json
+< sample.json jsonxlsx \
+  'title:"Movie Title" year stars.name:"Movie Actors" ratings.imdb:"IMDB Score"' movies.xlsx 
 ```
 
-This is the output:
+This is the output (movies.xlsx):
 
 ![screen](https://raw.githubusercontent.com/danchoi/jsonxlsx/master/jsonxlsxscreen.png)
