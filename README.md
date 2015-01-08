@@ -64,4 +64,4 @@ dist jsonxlsx 'title:"Movie Title" year stars.name:"Movie Actors" ratings.imdb:"
 
 This is the output:
 
-
+![screen](https://raw.githubusercontent.com/danchoi/jsonxlsx/master/jsonxlsxscreen.png)
