@@ -4,10 +4,10 @@ Transforms a standard JSON format to a Excel xlsx document
 
 ## Install
 
-A prerequisite is a the xlsx fork at https://github.com/danchoi/jsonxlsx, which 
+A prerequisite is a the xlsx fork at https://github.com/danchoi/xlsx, which 
 must be added to the cabal sandbox:
 
-    cabal sandbox add-source ../path-to-jsonxlsx-fork
+    cabal sandbox add-source ../path-to-xlsx-fork
 
 Then you can cabal build this project in a cabal sandbox.
 
