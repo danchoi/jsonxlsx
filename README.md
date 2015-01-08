@@ -1,6 +1,9 @@
 # jsonxlsx
 
-Transforms a standard JSON format to a Excel xlsx document
+Transforms a standard JSON format to a Excel xlsx document.
+
+This project is experimental; jsonxlsx's xlsx output has not been tested with
+Excel, only with OpenOffice.
 
 ## Install
 
