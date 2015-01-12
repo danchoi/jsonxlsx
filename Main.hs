@@ -17,7 +17,7 @@ import Data.Attoparsec.Lazy as Atto hiding (Result)
 import Data.Attoparsec.ByteString.Char8 (endOfLine, sepBy)
 import qualified Data.HashMap.Lazy as HM
 import qualified Data.Vector as V
-import Data.Scientific  (Scientific, floatingOrInteger)
+import Data.Scientific  (Scientific, floatingOrInteger, fromFloatDigits, scientific)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy.IO as TL
 import qualified Options.Applicative as O
@@ -105,10 +105,14 @@ mkHeaderCell x = def { _cellValue = Just (CellText x) }
 jsonToCell :: Value -> Cell
 jsonToCell (String x) = def { _cellValue = Just (CellText x) }
 jsonToCell Null = def { _cellValue = Nothing }
-jsonToCell (Number x) = def { _cellValue = Just (CellDouble $ scientificToDouble x) }
+jsonToCell (Number x) = def { _cellValue = Just (CellDouble $ scientificToDouble $ numberToScientific x) }
 jsonToCell (Bool x) = def { _cellValue = Just (CellBool x) }
 jsonToCell (Object _) = def { _cellValue = Just (CellText "[Object]") }
 jsonToCell (Array _) = def { _cellValue = Just (CellText "[Array]") }
+
+numberToScientific :: AT.Number -> Scientific
+numberToScientific (AT.D x) = fromFloatDigits x
+numberToScientific (AT.I x) = scientific x 1
 
 scientificToDouble :: Scientific -> Double
 scientificToDouble x = 
@@ -228,7 +232,7 @@ valToText Null = "null"
 valToText (Bool True) = "t"
 valToText (Bool False) = "f"
 valToText (Number x) = 
-    case floatingOrInteger x of
+    case floatingOrInteger $ numberToScientific x of
         Left float -> T.pack . show $ float
         Right int -> T.pack . show $ int
 valToText (Object _) = "[Object]"
