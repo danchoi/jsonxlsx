@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings, QuasiQuotes, BangPatterns, ScopedTypeVariables #-}
 module Main where
 import Codec.Xlsx
-import Data.Text (Text)
+import Data.Text (Text, take)
 import Control.Applicative
 import qualified Data.Map.Strict as M
 import qualified Data.ByteString.Lazy as L
@@ -41,6 +41,7 @@ data Options = Options {
   , jsonExpr :: String
   , outputFile :: String
   , debugKeyPaths :: Bool
+  , maxStringLen :: Int
   } deriving Show
 
 parseOpts :: O.Parser Options
@@ -49,6 +50,7 @@ parseOpts = Options
   <*> O.argument O.str (O.metavar "FIELDS" <> O.help "JSON keypath expressions")
   <*> O.argument O.str (O.metavar "OUTFILE" <> O.help "Output file to write to. Use '-' to emit binary xlsx data to STDOUT.") 
   <*> O.switch (O.long "debug" <> O.help "Debug keypaths")
+  <*> maxStrLen
 
 opts = O.info (O.helper <*> parseOpts)
           (O.fullDesc 
@@ -57,9 +59,16 @@ opts = O.info (O.helper <*> parseOpts)
             <> O.header "jsonxlsx"
             <> O.footer "See https://github.com/danchoi/jsonxlsx for more information.")
 
+maxStrLen :: O.Parser Int
+maxStrLen = O.option O.auto
+            ( O.long "maxlen"
+           <> O.short 'l'
+           <> O.metavar "MAXLEN"
+           <> O.value (-1)
+           <> O.help "Limit the length of strings (-1 for unlimited)" )
 
 main = do
-  Options arrayDelim expr outfile debugKeyPaths <- O.execParser opts
+  Options arrayDelim expr outfile debugKeyPaths maxLen <- O.execParser opts
   x <- BL.getContents 
   ct <- getClockTime
   let xs :: [Value]
@@ -77,7 +86,7 @@ main = do
       headerIndexedCells :: [((Int,Int), Cell)]
       headerIndexedCells = zip [(1, x) | x <- [1..]] headerCells
       rows :: [[Cell]]
-      rows = map (map jsonToCell) xs'
+      rows = map (map (jsonToCell . truncateStr maxLen)) xs'
       rowsIndexedCells :: [[((Int,Int), Cell)]]
       rowsIndexedCells = map mkRowIndexedCells $ zip [2..] rows
       allCells = concat (headerIndexedCells:rowsIndexedCells)
@@ -101,6 +110,11 @@ mkRowIndexedCells (rowNumber, cells) = zip [(rowNumber, x) | x <- [1..]] cells
 
 mkHeaderCell :: Text -> Cell
 mkHeaderCell x = def { _cellValue = Just (CellText x) }
+
+truncateStr :: Int -> Value -> Value
+truncateStr (-1) v = v
+truncateStr l (String xs) = String $ T.take l xs
+truncateStr _ v = v
 
 jsonToCell :: Value -> Cell
 jsonToCell (String x) = def { _cellValue = Just (CellText x) }
