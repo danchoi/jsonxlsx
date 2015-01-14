@@ -4,6 +4,7 @@ import Codec.Xlsx
 import Data.Text (Text, take)
 import Control.Applicative
 import qualified Data.Map.Strict as M
+import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as L
 import Data.ByteString.Lazy as BL hiding (map, intersperse, zip, concat)
 import qualified Data.ByteString.Lazy.Char8 as L8 
@@ -17,13 +18,14 @@ import Data.Attoparsec.Lazy as Atto hiding (Result)
 import Data.Attoparsec.ByteString.Char8 (endOfLine, sepBy)
 import qualified Data.HashMap.Lazy as HM
 import qualified Data.Vector as V
-import Data.Scientific  (Scientific, floatingOrInteger, fromFloatDigits, scientific)
+import Data.Scientific  (Scientific, floatingOrInteger)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy.IO as TL
 import qualified Options.Applicative as O
 import Control.Monad (when)
 import System.Exit
 import Data.String.QQ 
+import qualified Data.Text.Encoding as T (encodeUtf8, decodeUtf8)
 
 -- Hackage: https://hackage.haskell.org/package/xlsx
 {-
@@ -43,6 +45,9 @@ data Options = Options {
   , debugKeyPaths :: Bool
   , maxStringLen :: Int
   } deriving Show
+
+defaultMaxBytes :: Int
+defaultMaxBytes = 32768
 
 parseOpts :: O.Parser Options
 parseOpts = Options 
@@ -64,7 +69,7 @@ maxStrLen = O.option O.auto
             ( O.long "maxlen"
            <> O.short 'l'
            <> O.metavar "MAXLEN"
-           <> O.value (-1)
+           <> O.value defaultMaxBytes
            <> O.help "Limit the length of strings (-1 for unlimited)" )
 
 main = do
@@ -113,20 +118,21 @@ mkHeaderCell x = def { _cellValue = Just (CellText x) }
 
 truncateStr :: Int -> Value -> Value
 truncateStr (-1) v = v
-truncateStr l (String xs) = String $ T.take l xs
+truncateStr l (String xs) = 
+    let truncated = String . T.decodeUtf8 . B.take (l - 4) . T.encodeUtf8 $ xs
+    in if truncated == xs
+       then xs
+       else xs <> "..." -- ellipsis
+
 truncateStr _ v = v
 
 jsonToCell :: Value -> Cell
 jsonToCell (String x) = def { _cellValue = Just (CellText x) }
 jsonToCell Null = def { _cellValue = Nothing }
-jsonToCell (Number x) = def { _cellValue = Just (CellDouble $ scientificToDouble $ numberToScientific x) }
+jsonToCell (Number x) = def { _cellValue = Just (CellDouble $ scientificToDouble x) }
 jsonToCell (Bool x) = def { _cellValue = Just (CellBool x) }
 jsonToCell (Object _) = def { _cellValue = Just (CellText "[Object]") }
 jsonToCell (Array _) = def { _cellValue = Just (CellText "[Array]") }
-
-numberToScientific :: AT.Number -> Scientific
-numberToScientific (AT.D x) = fromFloatDigits x
-numberToScientific (AT.I x) = scientific x 0
 
 scientificToDouble :: Scientific -> Double
 scientificToDouble x = 
@@ -246,7 +252,7 @@ valToText Null = "null"
 valToText (Bool True) = "t"
 valToText (Bool False) = "f"
 valToText (Number x) = 
-    case floatingOrInteger $ numberToScientific x of
+    case floatingOrInteger x of
         Left float -> T.pack . show $ float
         Right int -> T.pack . show $ int
 valToText (Object _) = "[Object]"

@@ -22,7 +22,7 @@ executable jsonxlsx
                      , containers
                      , old-time
                      , bytestring
-                     , aeson
+                     , aeson >= 0.8.0.1
                      , attoparsec
                      , unordered-containers
                      , string-qq
