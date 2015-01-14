@@ -278,8 +278,8 @@ str1 = "1234567890"
 
 tests = test [
     "no truncation, under limit " ~: str1         @=? truncateStr 10 str1
-  , "truncation"                  ~: "12345..." @=? truncateStr 8 str1
-  , "John Smith bytelength"  ~: 10  @=? bytelen  "John Smith"
-  , "John Smith"  ~: "John Smith" @=? truncateStr 10 "John Smith"
+  , "truncation"                  ~: "12345..."   @=? truncateStr 8 str1
+  , "John Smith bytelength"       ~: 10           @=? bytelen  "John Smith"
+  , "John Smith"                  ~: "John Smith" @=? truncateStr 10 "John Smith"
   ]
 
