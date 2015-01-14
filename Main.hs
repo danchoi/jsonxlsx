@@ -136,7 +136,6 @@ truncateText :: Int -> Text -> Text
 truncateText maxBytes s | bytelen s > maxBytes = 
       truncateText maxBytes . T.take (T.length s - d) $ s
     where d = bytelen s - maxBytes
-
 truncateText _ s = s
 
 bytelen :: Text -> Int
