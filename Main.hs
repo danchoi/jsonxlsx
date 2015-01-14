@@ -122,7 +122,7 @@ truncateStr (-1) v = v
 truncateStr maxlen (String xs) = 
     let ellipsis = ("..." :: Text)
         maxlen' = maxlen - (bytelen ellipsis)
-    in if (bytelen xs) > maxlen' 
+    in if (bytelen xs) > maxlen
        then let s = truncateText maxlen' xs 
             in String $ s <> ellipsis
        else String xs
@@ -277,7 +277,9 @@ t = runTestTT tests
 str1 = "1234567890"
 
 tests = test [
-    "no truncation, under limit " ~: str1         @=? truncateStr 14 str1
-  , "truncation"                  ~: "1234567..." @=? truncateStr 10 str1
+    "no truncation, under limit " ~: str1         @=? truncateStr 10 str1
+  , "truncation"                  ~: "12345..." @=? truncateStr 8 str1
+  , "John Smith bytelength"  ~: 10  @=? bytelen  "John Smith"
+  , "John Smith"  ~: "John Smith" @=? truncateStr 10 "John Smith"
   ]
 
