@@ -125,7 +125,8 @@ truncateStr maxlen (String xs) =
         bytelength = B.length . T.encodeUtf8 $ xs
         maxlen' = maxlen - bytelengthEllipsis
     in if bytelength > maxlen' 
-       then String . T.decodeUtf8 . B.take maxlen' . T.encodeUtf8 $ xs
+       then let s = T.decodeUtf8 . B.take maxlen' . T.encodeUtf8 $ xs 
+            in String $ s <> ellipsis
        else String xs
 
 truncateStr _ v = v
@@ -269,6 +270,6 @@ str1 = "1234567890"
 
 tests = test [
     "no truncation, under limit " ~: str1 @=? truncateStr 14 str1
-  , "truncation" ~: "1234567" @=? truncateStr 10 str1
+  , "truncation" ~: "1234567..." @=? truncateStr 10 str1
   ]
 
