@@ -121,10 +121,8 @@ truncateStr :: Int -> Value -> Value
 truncateStr (-1) v = v
 truncateStr maxlen (String xs) = 
     let ellipsis = ("..." :: Text)
-        bytelenEllipsis = bytelen ellipsis
-        bytelenS = B.length . T.encodeUtf8 $ xs
-        maxlen' = maxlen - bytelenEllipsis
-    in if bytelenS > maxlen' 
+        maxlen' = maxlen - (bytelen ellipsis)
+    in if (bytelen xs) > maxlen' 
        then let s = truncateText maxlen' xs 
             in String $ s <> ellipsis
        else String xs
