@@ -121,15 +121,26 @@ truncateStr :: Int -> Value -> Value
 truncateStr (-1) v = v
 truncateStr maxlen (String xs) = 
     let ellipsis = ("..." :: Text)
-        bytelengthEllipsis = B.length . T.encodeUtf8 $ ellipsis
-        bytelength = B.length . T.encodeUtf8 $ xs
-        maxlen' = maxlen - bytelengthEllipsis
-    in if bytelength > maxlen' 
-       then let s = T.decodeUtf8 . B.take maxlen' . T.encodeUtf8 $ xs 
+        bytelenEllipsis = bytelen ellipsis
+        bytelenS = B.length . T.encodeUtf8 $ xs
+        maxlen' = maxlen - bytelenEllipsis
+    in if bytelenS > maxlen' 
+       then let s = truncateText maxlen' xs 
             in String $ s <> ellipsis
        else String xs
-
 truncateStr _ v = v
+
+-- This should get Text approximately under the byte limit, erring on the side of being
+-- too aggressive.
+truncateText :: Int -> Text -> Text
+truncateText maxBytes s | bytelen s > maxBytes = 
+      truncateText maxBytes . T.take (T.length s - d) $ s
+    where d = bytelen s - maxBytes
+
+truncateText _ s = s
+
+bytelen :: Text -> Int
+bytelen = B.length . T.encodeUtf8 
 
 jsonToCell :: Value -> Cell
 jsonToCell (String x) = def { _cellValue = Just (CellText x) }
