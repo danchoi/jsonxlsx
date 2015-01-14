@@ -277,7 +277,7 @@ t = runTestTT tests
 str1 = "1234567890"
 
 tests = test [
-    "no truncation, under limit " ~: str1 @=? truncateStr 14 str1
-  , "truncation" ~: "1234567..." @=? truncateStr 10 str1
+    "no truncation, under limit " ~: str1         @=? truncateStr 14 str1
+  , "truncation"                  ~: "1234567..." @=? truncateStr 10 str1
   ]
 
