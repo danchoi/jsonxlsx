@@ -112,7 +112,7 @@ jsonToCell (Array _) = def { _cellValue = Just (CellText "[Array]") }
 
 numberToScientific :: AT.Number -> Scientific
 numberToScientific (AT.D x) = fromFloatDigits x
-numberToScientific (AT.I x) = scientific x 1
+numberToScientific (AT.I x) = scientific x 0
 
 scientificToDouble :: Scientific -> Double
 scientificToDouble x = 
