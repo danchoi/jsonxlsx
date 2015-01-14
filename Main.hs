@@ -26,6 +26,7 @@ import Control.Monad (when)
 import System.Exit
 import Data.String.QQ 
 import qualified Data.Text.Encoding as T (encodeUtf8, decodeUtf8)
+import Test.HUnit
 
 -- Hackage: https://hackage.haskell.org/package/xlsx
 {-
@@ -118,11 +119,14 @@ mkHeaderCell x = def { _cellValue = Just (CellText x) }
 
 truncateStr :: Int -> Value -> Value
 truncateStr (-1) v = v
-truncateStr l (String xs) = 
-    let truncated = T.decodeUtf8 . B.take (l - 4) . T.encodeUtf8 $ xs
-    in if truncated == xs
-       then String xs
-       else String $ xs <> "..." -- ellipsis
+truncateStr maxlen (String xs) = 
+    let ellipsis = ("..." :: Text)
+        bytelengthEllipsis = B.length . T.encodeUtf8 $ ellipsis
+        bytelength = B.length . T.encodeUtf8 $ xs
+        maxlen' = maxlen - bytelengthEllipsis
+    in if bytelength > maxlen' 
+       then String . T.decodeUtf8 . B.take maxlen' . T.encodeUtf8 $ xs
+       else String xs
 
 truncateStr _ v = v
 
@@ -257,4 +261,14 @@ valToText (Number x) =
         Right int -> T.pack . show $ int
 valToText (Object _) = "[Object]"
 
+
+
+t = runTestTT tests
+
+str1 = "1234567890"
+
+tests = test [
+    "no truncation, under limit " ~: str1 @=? truncateStr 14 str1
+  , "truncation" ~: "1234567" @=? truncateStr 10 str1
+  ]
 
