@@ -1,0 +1,9 @@
+flags: {}
+packages:
+- '.'
+- location:
+    git: git@github.com:qrilka/xlsx.git
+    commit: b3a7a92e157134f9d68dee87d95b70ba93795482
+extra-deps: 
+- string-qq-0.0.2
+resolver: lts-3.5
