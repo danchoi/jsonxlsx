@@ -21,6 +21,7 @@ executable jsonxlsx
                      , xlsx == 0.2.0
                      , containers
                      , old-time
+                     , time
                      , bytestring
                      , aeson >= 0.8.0.1
                      , attoparsec

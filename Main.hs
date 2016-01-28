@@ -9,6 +9,7 @@ import qualified Data.ByteString.Lazy as L
 import Data.ByteString.Lazy as BL hiding (map, intersperse, zip, concat)
 import qualified Data.ByteString.Lazy.Char8 as L8 
 import System.Time
+import Data.Time.Clock.POSIX (getPOSIXTime)
 import System.Environment (getArgs)
 import Data.Aeson
 import Data.Monoid
@@ -76,7 +77,7 @@ maxStrLen = O.option O.auto
 main = do
   Options arrayDelim expr outfile debugKeyPaths maxLen <- O.execParser opts
   x <- BL.getContents 
-  ct <- getClockTime
+  ct <- getPOSIXTime
   let xs :: [Value]
       xs = decodeStream x
       ks = parseKeyPath $ T.pack expr
