@@ -107,7 +107,7 @@ main = do
      print headerIndexedCells
      exitSuccess
   let ws = def { _wsCells = cellMap }
-  let xlsx = def { _xlSheets = M.fromList [("test", ws)] }
+  let xlsx = def { _xlSheets = M.fromList [("", ws)] }
   if outfile == "-"
   then L8.putStr $ fromXlsx ct xlsx
   else L.writeFile outfile $ fromXlsx ct xlsx
