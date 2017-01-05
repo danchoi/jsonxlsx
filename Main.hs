@@ -107,7 +107,7 @@ main = do
      print headerIndexedCells
      exitSuccess
   let ws = def { _wsCells = cellMap }
-  let xlsx = def { _xlSheets = M.fromList [("test", ws)] }
+  let xlsx = def { _xlSheets = [("test", ws)] }
   if outfile == "-"
   then L8.putStr $ fromXlsx ct xlsx
   else L.writeFile outfile $ fromXlsx ct xlsx
@@ -163,7 +163,7 @@ decodeStream bs = case decodeWith json bs of
     (Just x, xs) -> x:(decodeStream xs)
     (Nothing, _) -> []
 
-decodeWith :: (FromJSON a) => Parser Value -> BL.ByteString -> (Maybe a, BL.ByteString)
+decodeWith :: (FromJSON a) => Atto.Parser Value -> BL.ByteString -> (Maybe a, BL.ByteString)
 decodeWith p s =
     case Atto.parse p s of
       Atto.Done r v -> f v r
@@ -283,4 +283,3 @@ tests = test [
   , "John Smith bytelength"       ~: 10           @=? bytelen  "John Smith"
   , "John Smith"                  ~: "John Smith" @=? truncateStr 10 "John Smith"
   ]
-
